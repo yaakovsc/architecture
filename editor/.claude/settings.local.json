@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright *)",
+      "Bash(node node_modules/.bin/playwright install chromium)",
+      "Bash(npm --version)",
+      "Bash(node node_modules/vitest/vitest.mjs --version)",
+      "Bash(node_modules/.bin/playwright install *)",
+      "Bash(node -e \"require\\('./node_modules/@playwright/test'\\)\")",
+      "Bash(brew list *)",
+      "Read(//usr/local/bin/**)",
+      "Read(//opt/homebrew/bin/**)",
+      "Skill(update-config)"
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+version: '3.8'
+services:
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: architecture-postgres
+    environment:
+      POSTGRES_DB: architecture_db
+      POSTGRES_USER: arch_user
+      POSTGRES_PASSWORD: arch_pass_2024
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U arch_user -d architecture_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: architecture-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      # Single-lane processing for stability during long analysis jobs
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=1
+      # CPU-only (no GPU offload)
+      - OLLAMA_GPU_LAYERS=0
+      # Keep model loaded longer — 8GB has headroom
+      - OLLAMA_KEEP_ALIVE=15m
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          # 5 GB for Ollama — leaves ~2 GB for OS + Node + Postgres
+          memory: 5120M
+
+  drawio:
+    image: jgraph/drawio
+    container_name: architecture-drawio
+    ports:
+      - "8181:8080"
+    volumes:
+      - ./client/public/postal-lib.xml:/usr/local/tomcat/webapps/draw/postal-lib.xml:ro
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+volumes:
+  postgres_data:
+  ollama_data:

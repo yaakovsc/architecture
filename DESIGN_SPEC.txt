@@ -1,0 +1,403 @@
+================================================================================
+  DESIGN SYSTEM SPEC — מפת מערכות ארגוניות
+  Architecture Client · React 18 / Vite / Pure CSS Variables
+================================================================================
+
+
+────────────────────────────────────────────────────────────────────────────────
+  COLORS
+────────────────────────────────────────────────────────────────────────────────
+
+  Primary
+  -------
+  --color-primary          #1a3a6b   deep blue
+  --color-primary-light    #2554a3   medium blue
+  --color-primary-dark     #0f2347   dark navy
+
+  Accent
+  ------
+  --color-accent           #e8a020   orange / gold
+  --color-accent-dark      #c8881a   dark orange
+
+  Semantic
+  --------
+  --color-success          #22a06b   green
+  --color-danger           #e5381c   red
+  --color-warning          #f4a100   orange
+
+  Neutrals
+  --------
+  --color-bg               #f0f4f8   page background (light blue-gray)
+  --color-surface          #ffffff   card / panel background
+  --color-text             #1a2332   body text (near-black)
+  --color-text-muted       #5a6a7e   secondary text (medium gray)
+  --color-border           #d1dce8   borders and dividers
+
+  Criticality Badges
+  ------------------
+  critical    red     bg #fce8e6  text #c0392b
+  high        orange  bg #fff3e0  text #c87000
+  medium      blue    bg #e8eef6  text #1a3a6b
+  low         green   bg #e8f5ef  text #1a6b45
+
+  AI Status Badges
+  ----------------
+  none        gray    bg #eef1f5  text #8a9ab0
+  pending     orange  bg #fff3e0  text #c87000
+  processing  blue    bg #e8eef6  text #2554a3
+  ready       green   bg #e8f5ef  text #22a06b
+  error       red     bg #fce8e6  text #c0392b
+
+  Button Color Palette (7 presets)
+  ----------------------------------
+  #1a3a6b   primary blue
+  #2554a3   primary light
+  #5a6a7e   gray
+  #22a06b   green
+  #c87000   orange
+  #c0392b   red
+  #6b4ea3   purple
+
+
+────────────────────────────────────────────────────────────────────────────────
+  TYPOGRAPHY
+────────────────────────────────────────────────────────────────────────────────
+
+  Font Family      'Rubik', sans-serif
+                   'monospace'  (code / technical values only)
+  Direction        RTL (Hebrew)
+  Base Size        18px
+  Line Height      1.65
+  Font Smoothing   antialiased
+
+  Scale
+  -----
+  11px   micro labels, status dots
+  12px   table cell secondary, small badges
+  13px   small helper text, timestamps
+  14px   form labels, secondary UI text
+  15px   list item body, field values
+  16px   default body text
+  17px   sub-headings in panels
+  18px   base / root
+  20px   section titles
+
+  Weights
+  -------
+  400   body / normal
+  500   labels, tabs, nav items
+  600   card titles, list titles
+  700   page / section headings
+  800   hero titles
+
+
+────────────────────────────────────────────────────────────────────────────────
+  SPACING & SIZING
+────────────────────────────────────────────────────────────────────────────────
+
+  Border Radius
+  -------------
+  --radius-sm     6px    tags, badges, small chips
+  --radius-md     8px    inputs, small cards
+  --radius-lg     12px   modals, cards, panels
+  --radius-xl     20px   hero sections, pill buttons
+
+  Common Padding
+  --------------
+  4px  8px    badge / chip
+  8px  14px   button (small)
+  10px 18px   button (medium / default)
+  14px 22px   button (large)
+  16px        card inner padding (small)
+  24px        card inner padding (default)
+  32px        modal inner padding
+
+  Gap (flex/grid)
+  ---------------
+  4px    tight icon rows
+  8px    inline tag groups
+  12px   form field stacks
+  16px   card grids
+  24px   section separation
+
+
+────────────────────────────────────────────────────────────────────────────────
+  SHADOWS
+────────────────────────────────────────────────────────────────────────────────
+
+  --shadow-sm    0 1px  3px  rgba(26,58,107,0.08)
+  --shadow-md    0 4px  12px rgba(26,58,107,0.12)
+  --shadow-lg    0 8px  24px rgba(26,58,107,0.16)
+  --shadow-xl    0 16px 48px rgba(15,35,71,0.24)
+
+
+────────────────────────────────────────────────────────────────────────────────
+  ANIMATION & TRANSITIONS
+────────────────────────────────────────────────────────────────────────────────
+
+  Standard transition     0.2s ease   (hover, focus, color changes)
+  Slow transition         0.35s ease  (panel open/close)
+
+  Keyframes
+  ---------
+  slideInRight    translate from +60px → 0, opacity 0 → 1  (panels)
+  slideUp         translate from +30px → 0, opacity 0 → 1  (modals)
+  fadeIn          opacity 0 → 1
+  scaleIn         scale 0.95 → 1, opacity 0 → 1
+  spin            360° rotation (loaders)
+  pulse           scale 1 → 1.1 → 1 (alerts, dots)
+
+
+────────────────────────────────────────────────────────────────────────────────
+  BUTTONS
+────────────────────────────────────────────────────────────────────────────────
+
+  Base Style
+  ----------
+  display          inline-flex, align-items: center, gap: 6-8px
+  font             Rubik, 500 weight
+  border-radius    8px (default) / 20px (pill variant)
+  transition       0.2s ease
+  cursor           pointer
+
+  Variants
+  --------
+  Primary     bg #1a3a6b, text white, hover bg #2554a3
+  Accent      bg #e8a020, text white, hover bg #c8881a
+  Danger      bg #e5381c, text white, hover darkened
+  Success     bg #22a06b, text white, hover darkened
+  Ghost       bg transparent, border 1.5px solid current-color, hover bg tinted
+  Disabled    opacity 0.5, cursor not-allowed
+
+  Sizes
+  -----
+  small     font 13px, padding 6px 12px
+  default   font 14-15px, padding 9px 18px
+  large     font 15-16px, padding 12px 24px
+
+  Special Patterns
+  ----------------
+  "Add chapter" dashed   border 2px dashed #d1dce8, text muted, hover border primary
+  Icon-only              square, centered icon, border-radius 6-8px
+  Tab button             no border, bottom-border active indicator 2px solid primary
+
+
+────────────────────────────────────────────────────────────────────────────────
+  INPUTS & FORMS
+────────────────────────────────────────────────────────────────────────────────
+
+  Text Input / Textarea
+  ---------------------
+  background       #f8fafc
+  border           1.5px solid #d1dce8
+  border-radius    8px
+  padding          10px 14px
+  font             Rubik 15px, text #1a2332
+  focus outline    2px solid #2554a3, border-color #2554a3
+  placeholder      color #8a9ab0
+
+  Select
+  ------
+  Same as text input + custom dropdown arrow via `appearance: none`
+
+  Tags / Multi-value input
+  ------------------------
+  Pill chips: bg #e8eef6, text #1a3a6b, border-radius 20px, padding 3px 10px
+  Remove button: × inline, hover red
+
+  Required Indicator
+  ------------------
+  Red asterisk (*) after label, color #e5381c
+
+  Field Label
+  -----------
+  font-size 13-14px, font-weight 500, color #5a6a7e, margin-bottom 6px
+
+
+────────────────────────────────────────────────────────────────────────────────
+  BADGES & CHIPS
+────────────────────────────────────────────────────────────────────────────────
+
+  Base
+  ----
+  display          inline-flex
+  padding          3px 10px (small) / 5px 12px (default)
+  border-radius    20px (pill)
+  font-size        12-13px
+  font-weight      500
+
+  Color sets follow the criticality and status tables above.
+
+  Completion Dots (tab indicators)
+  ---------------------------------
+  8px circle, border-radius 50%
+  red    = incomplete
+  orange = partial
+  green  = complete
+
+
+────────────────────────────────────────────────────────────────────────────────
+  CARDS & PANELS
+────────────────────────────────────────────────────────────────────────────────
+
+  Standard Card
+  -------------
+  background       #ffffff
+  border           1px solid #d1dce8
+  border-radius    12px
+  padding          24px
+  box-shadow       --shadow-sm
+  hover            box-shadow --shadow-md, slight translateY(-1px)
+
+  Hero / Header Bands
+  -------------------
+  background       linear-gradient(135deg, #1a3a6b 0%, #0f2347 100%)
+  padding          24-32px
+  color            white
+  border-radius    12px 12px 0 0 (top of modal)
+
+  AI Panel Header (enterprise mode)
+  -----------------------------------
+  background       linear-gradient(135deg, #4a2080 0%, #2d1050 100%)  purple
+
+
+────────────────────────────────────────────────────────────────────────────────
+  MODALS
+────────────────────────────────────────────────────────────────────────────────
+
+  Overlay
+  -------
+  position         fixed, inset 0
+  background       rgba(0,0,0,0.6)
+  backdrop-filter  blur(4px)
+  z-index          1000+
+
+  Dialog
+  ------
+  background       #ffffff
+  border-radius    16px
+  box-shadow       --shadow-xl
+  animation        slideUp 0.25s ease
+  max-width        configurable (default ~700-900px)
+  overflow         auto
+
+  Close Button
+  ------------
+  top-right corner, ghost style, keyboard: Escape
+
+
+────────────────────────────────────────────────────────────────────────────────
+  NAVIGATION (Sidebar / Tabs)
+────────────────────────────────────────────────────────────────────────────────
+
+  Subject Sidebar
+  ---------------
+  width            220px
+  item padding     12px 16px
+  active item      bg #e8eef6, border-right 3px solid #1a3a6b, text #1a3a6b
+  icon             24-28px emoji / SVG, margin-left 10px (RTL)
+
+  Tabs (inline)
+  -------------
+  border-bottom    2px solid #d1dce8
+  active tab       border-bottom 2px solid #1a3a6b, text #1a3a6b, font-weight 600
+  font-size        14px
+
+  Top Nav Bar
+  -----------
+  background       #1a3a6b
+  height           60px
+  text             white
+  logo / branding  left (RTL: right), actions right
+
+
+────────────────────────────────────────────────────────────────────────────────
+  LISTS & TABLES
+────────────────────────────────────────────────────────────────────────────────
+
+  List Items
+  ----------
+  padding          12px 16px
+  border-bottom    1px solid #d1dce8
+  hover            background #f5f8fc
+  last-child       no border
+
+  Tables
+  ------
+  header           background #f0f4f8, font-weight 600, font-size 13px, color muted
+  cell             font-size 14-15px, padding 10px 14px
+  row hover        background #f5f8fc
+  border           1px solid #d1dce8 on header / rows
+
+  Empty State
+  -----------
+  centered text, icon above, color muted, font-size 15px
+
+
+────────────────────────────────────────────────────────────────────────────────
+  ICONS
+────────────────────────────────────────────────────────────────────────────────
+
+  Implementation   emoji characters (no icon library dependency)
+  Accent wrapper   circular bg #e8a020 (orange), padding 12px, border-radius 50%
+                   used in modal hero sections
+  Available set    32 emojis for navigation buttons (⚙️ 🔒 📋 💳 📦 🚚 👥 etc.)
+
+
+────────────────────────────────────────────────────────────────────────────────
+  SCROLLBAR
+────────────────────────────────────────────────────────────────────────────────
+
+  width            6px
+  track            transparent
+  thumb            #d1dce8, border-radius 3px
+  thumb:hover      #1a3a6b
+
+
+────────────────────────────────────────────────────────────────────────────────
+  FOCUS / ACCESSIBILITY
+────────────────────────────────────────────────────────────────────────────────
+
+  outline          2px solid #2554a3
+  outline-offset   2px
+  All interactive elements have explicit focus styles
+
+
+────────────────────────────────────────────────────────────────────────────────
+  LOADING STATES
+────────────────────────────────────────────────────────────────────────────────
+
+  Spinner
+  -------
+  border           3px solid #d1dce8 (track)
+  border-top-color #1a3a6b (active segment)
+  border-radius    50%, width/height 24px
+  animation        spin 0.8s linear infinite
+
+  Progress Text    small, color muted, below spinner or inline
+
+
+────────────────────────────────────────────────────────────────────────────────
+  GLOBAL PATTERNS
+────────────────────────────────────────────────────────────────────────────────
+
+  - All components use `const S = { key: { ...styles } }` inline style objects
+  - RTL direction (`direction: 'rtl'`) applied at root and component level
+  - No Tailwind — pure CSS custom properties + inline styles
+  - Box-sizing: border-box globally
+  - Smooth scroll globally
+  - Fonts loaded via Google Fonts (Rubik)
+
+
+────────────────────────────────────────────────────────────────────────────────
+  SERVICE / DOMAIN ENUMERATIONS
+────────────────────────────────────────────────────────────────────────────────
+
+  Service Types      SaaS, On-Premise, Hybrid, PaaS, IaaS, Legacy
+  Frequencies        Real-time, Near Real-time, Batch (daily), Batch (weekly),
+                     On Demand, Event-driven
+  System Statuses    active, inactive, deprecated, planned
+  User Roles         admin, user
+
+
+================================================================================

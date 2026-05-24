@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node src/seedNav.js)",
+      "Bash(pkill -f \"node src/index.js\")",
+      "Bash(pkill -f \"nodemon\")",
+      "Bash(find /Users/kobis/projects/architecture -maxdepth 3 -not -path */node_modules* -not -path */.DS_Store -type f -o -type d)",
+      "Bash(cat:*)"
+    ]
+  }
+}

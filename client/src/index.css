@@ -1,0 +1,95 @@
+/* ===== CSS Variables ===== */
+:root {
+  --primary: #1a3a6b;
+  --primary-light: #2554a3;
+  --primary-dark: #0f2347;
+  --accent: #e8a020;
+  --accent-dark: #c8881a;
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --text: #1a2332;
+  --text-muted: #5a6a7e;
+  --border: #d1dce8;
+  --success: #22a06b;
+  --danger: #e5381c;
+  --warning: #f4a100;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+
+  --shadow-sm: 0 1px 3px rgba(26,58,107,0.08);
+  --shadow-md: 0 4px 12px rgba(26,58,107,0.12);
+  --shadow-lg: 0 8px 24px rgba(26,58,107,0.16);
+  --shadow-xl: 0 16px 48px rgba(15,35,71,0.24);
+
+  --transition: 0.2s ease;
+  --transition-slow: 0.35s ease;
+}
+
+/* ===== Reset ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  direction: rtl;
+  font-size: 18px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Rubik', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Animations ===== */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Page transitions ===== */
+.page-enter {
+  animation: slideInRight 0.35s ease forwards;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
+
+/* ===== Focus ===== */
+*:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
