@@ -4,6 +4,76 @@ const { System, NavResponse, NavButton, AiSummary, EnterpriseSummary, AiConfig }
 const ai     = require('../services/aiService');
 const worker = require('../workers/analysisQueue');
 
+// ── Delta analysis helpers ────────────────────────────────────────────────
+function jaccardDistance(a = '', b = '') {
+  const sa = new Set(a.toLowerCase().split(/\s+/).filter(Boolean));
+  const sb = new Set(b.toLowerCase().split(/\s+/).filter(Boolean));
+  if (!sa.size && !sb.size) return 0;
+  const intersection = [...sa].filter(w => sb.has(w)).length;
+  return 1 - intersection / new Set([...sa, ...sb]).size;
+}
+
+function analyseDelta(oldRow, newData, D) {
+  const old = (key) => oldRow?.[key] ?? D[key];
+  const result = {
+    score: 0,
+    affectsFragments:    false,
+    affectsSystemReport: false,
+    affectsEnterprise:   false,
+    reasons: [],
+  };
+
+  // Fragment prompt — triggers full system re-analysis
+  if (newData.fragmentAnalysisPrompt !== undefined) {
+    const dist = jaccardDistance(old('fragmentAnalysisPrompt'), newData.fragmentAnalysisPrompt);
+    if (dist > 0.15) {
+      result.score += 10;
+      result.affectsFragments = result.affectsSystemReport = result.affectsEnterprise = true;
+      result.reasons.push(`פרומפט ניתוח דיאגרמה שונה ב-${Math.round(dist * 100)}%`);
+    }
+  }
+
+  // System report chapters — triggers system + enterprise re-run
+  if (newData.systemReportChapters !== undefined) {
+    const oc = old('systemReportChapters') || [];
+    const nc = newData.systemReportChapters || [];
+    if (nc.length !== oc.length) {
+      result.score += 10;
+      result.affectsSystemReport = result.affectsEnterprise = true;
+      result.reasons.push(`פרקי דו"ח מערכת שונו (${oc.length} → ${nc.length} פרקים)`);
+    } else {
+      const maxDist = Math.max(0, ...nc.map((ch, i) => jaccardDistance(oc[i]?.prompt || '', ch.prompt || '')));
+      if (maxDist > 0.25) {
+        result.score += 6;
+        result.affectsSystemReport = result.affectsEnterprise = true;
+        result.reasons.push(`תוכן פרקי דו"ח מערכת שונה ב-${Math.round(maxDist * 100)}%`);
+      }
+    }
+  }
+
+  // Enterprise report chapters — triggers enterprise re-run only
+  if (newData.enterpriseReportChapters !== undefined) {
+    const oc = old('enterpriseReportChapters') || [];
+    const nc = newData.enterpriseReportChapters || [];
+    if (nc.length !== oc.length) {
+      result.score += 10;
+      result.affectsEnterprise = true;
+      result.reasons.push(`פרקי דו"ח ארגוני שונו (${oc.length} → ${nc.length} פרקים)`);
+    } else {
+      const maxDist = Math.max(0, ...nc.map((ch, i) => jaccardDistance(oc[i]?.prompt || '', ch.prompt || '')));
+      if (maxDist > 0.25) {
+        result.score += 6;
+        result.affectsEnterprise = true;
+        result.reasons.push(`תוכן פרקי דו"ח ארגוני שונה ב-${Math.round(maxDist * 100)}%`);
+      }
+    }
+  }
+
+  // chatSystemPrompt — affects only live chat, not stored reports → no re-run
+
+  return result;
+}
+
 // ── GET /api/ai/status ────────────────────────────────────────────────────
 const getStatus = async (req, res) => {
   try {
@@ -209,6 +279,8 @@ const getConfig = async (req, res) => {
 };
 
 // ── PUT /api/ai/config ────────────────────────────────────────────────────
+const RERUN_THRESHOLD = 8; // delta score that justifies a re-run
+
 const updateConfig = async (req, res) => {
   try {
     const allowed = [
@@ -221,13 +293,44 @@ const updateConfig = async (req, res) => {
     for (const key of allowed) {
       if (req.body[key] !== undefined) updates[key] = req.body[key];
     }
-    // Only update API key if a new real key (not mask placeholder) is provided
     if (req.body.claudeApiKey && !req.body.claudeApiKey.startsWith('****')) {
       updates.claudeApiKey = req.body.claudeApiKey;
     }
+
+    // ── Delta analysis — decide whether to trigger re-run ──────────────
+    const oldRow = await AiConfig.findOne({ where: { id: 'main' } });
+    const delta  = analyseDelta(oldRow, updates, AiConfig.DEFAULTS);
+
     await AiConfig.upsert({ id: 'main', ...updates });
     ai.invalidateConfigCache();
-    res.json({ message: 'הגדרות AI עודכנו' });
+
+    let rerunMessage = null;
+    if (delta.score >= RERUN_THRESHOLD) {
+      if (delta.affectsFragments) {
+        // Fragment prompt changed — re-analyse all systems from scratch
+        const systems = await System.findAll();
+        for (const s of systems) worker.enqueue(s.id);
+        rerunMessage = `ניתוח מחדש הוצא לתור עבור ${systems.length} מערכות + דו"ח ארגוני`;
+      } else if (delta.affectsSystemReport) {
+        const systems = await System.findAll();
+        for (const s of systems) worker.enqueue(s.id);
+        rerunMessage = `ניתוח דו"ח מערכת מחדש הוצא לתור (${systems.length} מערכות)`;
+      } else if (delta.affectsEnterprise) {
+        worker.enqueueEnterprise();
+        rerunMessage = 'ניתוח דו"ח ארגוני מחדש הוצא לתור';
+      }
+    }
+
+    res.json({
+      message: 'הגדרות AI עודכנו',
+      rerun:   !!rerunMessage,
+      rerunMessage,
+      delta: {
+        score:   delta.score,
+        reasons: delta.reasons,
+        threshold: RERUN_THRESHOLD,
+      },
+    });
   } catch {
     res.status(500).json({ message: 'שגיאת שרת' });
   }

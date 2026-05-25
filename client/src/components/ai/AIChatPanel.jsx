@@ -19,6 +19,13 @@ function renderMd(text) {
     .replace(/\n/g,'<br/>');
 }
 
+function formatReportDate(ts) {
+  if (!ts) return null;
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 // ── Status badge config ───────────────────────────────────────────────────────
 const STATUS_CONFIG = {
   none:       { label: 'לא נותח',    color: '#8a9ab0', bg: '#f0f4f8', icon: '○' },
@@ -250,6 +257,11 @@ export default function AIChatPanel({ mode = 'system', system, onClose }) {
             ? (summary?.systemCount > 0 ? ` · ${summary.systemCount} מערכות נותחו` : '')
             : (summary?.fragmentCount > 0 ? ` · ${summary.fragmentCount} קבצים נותחו` : ''))
           }
+          {effectiveStatus === 'ready' && summary?.processedAt && (
+            <span style={{ fontWeight: 400, opacity: 0.7, marginRight: 6, fontSize: 11 }}>
+              {' '}· עדכני לתאריך {formatReportDate(summary.processedAt)}
+            </span>
+          )}
         </span>
         <div style={{ display: 'flex', gap: 6 }}>
           {effectiveStatus === 'ready' && reportContent && (

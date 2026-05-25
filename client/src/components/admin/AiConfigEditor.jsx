@@ -42,10 +42,16 @@ export default function AiConfigEditor() {
     try {
       const payload = { ...config };
       if (newApiKey.trim()) payload.claudeApiKey = newApiKey.trim();
-      await aiApi.updateConfig(payload);
+      const { data } = await aiApi.updateConfig(payload);
       setNewApiKey('');
-      await load(); // refresh masked key from server
-      showMsg('ok', 'הגדרות נשמרו בהצלחה');
+      await load();
+      if (data.rerun && data.rerunMessage) {
+        showMsg('ok', `✓ נשמר · ${data.rerunMessage}`);
+      } else if (data.delta?.score > 0) {
+        showMsg('ok', `✓ נשמר · שינוי קטן (ציון ${data.delta.score}/${data.delta.threshold}) — אין הפעלה מחדש אוטומטית`);
+      } else {
+        showMsg('ok', 'הגדרות נשמרו בהצלחה');
+      }
     } catch {
       showMsg('error', 'שגיאה בשמירה');
     } finally {
