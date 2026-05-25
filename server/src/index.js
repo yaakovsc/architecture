@@ -17,6 +17,9 @@ const start = async () => {
       `ALTER TABLE "AiSummaries"        ADD COLUMN IF NOT EXISTS progress VARCHAR(255)`,
       `ALTER TABLE "EnterpriseSummaries" ADD COLUMN IF NOT EXISTS progress VARCHAR(255)`,
       `ALTER TABLE "EnterpriseSummaries" ADD COLUMN IF NOT EXISTS id VARCHAR(32)`,
+      `ALTER TABLE ai_configs            ADD COLUMN IF NOT EXISTS "claudeApiKey" TEXT`,
+      `ALTER TABLE ai_configs            ADD COLUMN IF NOT EXISTS "claudeModel"  VARCHAR(255)`,
+      `ALTER TABLE "NavFields"           ADD COLUMN IF NOT EXISTS "isHoverText"  BOOLEAN DEFAULT FALSE`,
       // Seed default AI config row if not present
       `INSERT INTO ai_configs (id, "createdAt", "updatedAt") VALUES ('main', NOW(), NOW()) ON CONFLICT (id) DO NOTHING`,
     ];

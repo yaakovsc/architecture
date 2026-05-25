@@ -18,6 +18,19 @@ const POSTAL_LIBRARY = [
   { title: 'API',        tooltip: 'API Gateway / Integration',     w: 120, h: 60,  xml: wrapXml('<mxCell value="API"      style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#d5e8d4;strokeColor=#009900;fontColor=#006600;" vertex="1"><mxGeometry x="0" y="0" width="120" height="60"  as="geometry"/></mxCell>') },
   { title: 'External',   tooltip: 'שירות חיצוני / Cloud',          w: 120, h: 80,  xml: wrapXml('<mxCell value="External" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1"><mxGeometry x="0" y="0" width="120" height="80"  as="geometry"/></mxCell>') },
   { title: 'ממשק',       tooltip: 'תלות / Interface',              w: 120, h: 60,  xml: wrapXml('<mxCell value="ממשק"    style="endArrow=block;startArrow=none;html=1;strokeColor=#000000;strokeWidth=2;" edge="1"><mxGeometry width="120" relative="1" as="geometry"><mxPoint x="0" y="30" as="sourcePoint"/><mxPoint x="120" y="30" as="targetPoint"/></mxGeometry></mxCell>') },
+  { title: 'רכיבי ליבה',    tooltip: 'Vertical Container',            w: 200, h: 120, xml: wrapXml('<mxCell value="רכיבי ליבה" style="swimlane;startSize=30;fillColor=none;strokeColor=#FBBF24;strokeWidth=2;fontStyle=1;" vertex="1"><mxGeometry x="0" y="0" width="200" height="120" as="geometry"/></mxCell>') },
+  { title: 'Swim-lanes',    tooltip: 'Horizontal Swimlane Container',  w: 200, h: 120, xml: wrapXml('<mxCell value="Swim-lanes" style="swimlane;horizontal=0;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;" vertex="1"><mxGeometry x="0" y="0" width="200" height="120" as="geometry"/></mxCell>') },
+  { title: 'POS Device',    tooltip: 'Cell Phone / POS Device',       w: 50,  h: 120, xml: wrapXml('<mxCell value="POS Device"      style="shape=mxgraph.citrix.cell_phone;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="50" height="120" as="geometry"/></mxCell>') },
+  { title: 'שירות ענני',    tooltip: 'Cloud Service',                  w: 120, h: 78,  xml: wrapXml('<mxCell value="שירות ענני"      style="shape=mxgraph.citrix.cloud;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="120" height="78" as="geometry"/></mxCell>') },
+  { title: 'שרת אפליקציה', tooltip: 'Application Server',             w: 80,  h: 100, xml: wrapXml('<mxCell value="שרת אפליקציה"    style="shape=mxgraph.citrix.command_center;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="80" height="100" as="geometry"/></mxCell>') },
+  { title: 'בסיס נתונים',   tooltip: 'Database Server',               w: 80,  h: 90,  xml: wrapXml('<mxCell value="בסיס נתונים"     style="shape=mxgraph.citrix.database_server;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="80" height="90" as="geometry"/></mxCell>') },
+  { title: 'Active Directory', tooltip: 'Directory Server / AD',      w: 80,  h: 110, xml: wrapXml('<mxCell value="Active Directory" style="shape=mxgraph.citrix.directory_server;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="80" height="110" as="geometry"/></mxCell>') },
+  { title: 'שרת קבצים',     tooltip: 'File Server',                   w: 80,  h: 110, xml: wrapXml('<mxCell value="שרת קבצים"       style="shape=mxgraph.citrix.file_server;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="80" height="110" as="geometry"/></mxCell>') },
+  { title: 'Firewall',       tooltip: 'Firewall',                     w: 80,  h: 100, xml: wrapXml('<mxCell value="Firewall"         style="shape=mxgraph.citrix.firewall;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="80" height="100" as="geometry"/></mxCell>') },
+  { title: 'BI',             tooltip: 'Reporting / BI',               w: 80,  h: 90,  xml: wrapXml('<mxCell value="BI"              style="shape=mxgraph.citrix.reporting;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="80" height="90" as="geometry"/></mxCell>') },
+  { title: 'IIS',            tooltip: 'Web Server / IIS',             w: 80,  h: 94,  xml: wrapXml('<mxCell value="IIS"             style="shape=mxgraph.citrix.web_server;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="80" height="94" as="geometry"/></mxCell>') },
+  { title: 'שרת',            tooltip: 'Tower Server',                 w: 70,  h: 90,  xml: wrapXml('<mxCell value="שרת"             style="shape=mxgraph.citrix.tower_server;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="70" height="90" as="geometry"/></mxCell>') },
+  { title: 'משתמשים',        tooltip: 'Users',                        w: 90,  h: 76,  xml: wrapXml('<mxCell value="משתמשים"         style="shape=mxgraph.citrix.users;html=1;whiteSpace=wrap;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1"><mxGeometry x="0" y="0" width="90" height="76" as="geometry"/></mxCell>') },
 ];
 
 // Extract origin (scheme + host + port) from the configured URL for postMessage validation
@@ -46,6 +59,8 @@ export default function DrawioEditorModal({ xml, onSave, onClose }) {
           action: 'configure',
           config: {
             defaultLibraries: 'postal;general;miscellaneous;advanced;uml;er;bpmn;flowchart;basic;arrows2',
+            expandLibraries: false,
+            pageFormat: { width: 1654, height: 1169 },
             libraries: [
               {
                 entries: [
@@ -66,6 +81,9 @@ export default function DrawioEditorModal({ xml, onSave, onClose }) {
       } else if (msg.event === 'init') {
         setPhase('editing');
         send({ action: 'load', xml: xml || '' });
+        // fitDiagramToWindow (draw.io default) only fits width for blank diagrams.
+        // fitPage action calls graph.fitPages(1) which uses pageFormat to fit both dimensions.
+        setTimeout(() => send({ action: 'invokeAction', actionName: 'fitPage' }), 300);
       } else if (msg.event === 'save') {
         savedXmlRef.current = msg.xml;
         setPhase('format-picker');

@@ -43,6 +43,8 @@ const AiConfig = sequelize.define('AiConfig', {
     primaryKey: true,
     defaultValue: 'main',
   },
+  claudeApiKey:           { type: DataTypes.TEXT,   allowNull: true },
+  claudeModel:            { type: DataTypes.STRING, allowNull: true },
   chatSystemPrompt:       { type: DataTypes.TEXT,   allowNull: true },
   fragmentAnalysisPrompt: { type: DataTypes.TEXT,   allowNull: true },
   systemReportTitle:      { type: DataTypes.STRING, allowNull: true },
@@ -55,6 +57,7 @@ const AiConfig = sequelize.define('AiConfig', {
 
 // Expose defaults so the service and controller can fall back to them
 AiConfig.DEFAULTS = {
+  claudeModel:              'claude-sonnet-4-6',
   chatSystemPrompt:         DEFAULT_CHAT_PROMPT,
   fragmentAnalysisPrompt:   DEFAULT_FRAGMENT_PROMPT,
   systemReportTitle:        'דו"ח ארכיטקטורה — {name}',

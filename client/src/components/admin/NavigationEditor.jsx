@@ -138,11 +138,12 @@ export default function NavigationEditor() {
 
   // ── Field CRUD ─────────────────────────────────────────────────────────
 
-  const startNewField  = (subjectId) => setFieldForm({ subjectId, name: '', type: 'text', exampleValue: '', isRequired: false, options: [] });
+  const startNewField  = (subjectId) => setFieldForm({ subjectId, name: '', type: 'text', exampleValue: '', isRequired: false, isHoverText: false, options: [] });
   const startEditField = (f) => setFieldForm({
     id: f.id, subjectId: f.subjectId, name: f.name,
     type: f.type, exampleValue: f.exampleValue || '',
     isRequired: f.isRequired,
+    isHoverText: f.isHoverText || false,
     options: (f.options || []).map(o => ({ label: o.label, value: o.value || o.label })),
     optionInput: '',
   });
@@ -411,6 +412,10 @@ export default function NavigationEditor() {
               <label style={{ ...S.lbl, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <input type="checkbox" checked={fieldForm.isRequired} onChange={e => setFieldForm(p => ({ ...p, isRequired: e.target.checked }))} />
                 שדה חובה
+              </label>
+              <label style={{ ...S.lbl, flexDirection: 'row', alignItems: 'center', gap: 8 }} title='תוכן שדה זה יוצג כ-Tooltip בריחוף מעל אזור המערכת בדיאגרמה הראשית'>
+                <input type="checkbox" checked={fieldForm.isHoverText || false} onChange={e => setFieldForm(p => ({ ...p, isHoverText: e.target.checked }))} />
+                💬 טקסט Hover לדיאגרמה
               </label>
 
               {(fieldForm.type === 'select' || fieldForm.type === 'multi_value_select') && (

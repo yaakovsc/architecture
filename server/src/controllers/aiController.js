@@ -8,11 +8,13 @@ const worker = require('../workers/analysisQueue');
 const getStatus = async (req, res) => {
   try {
     const available = await ai.isAvailable();
+    const row = await AiConfig.findOne({ where: { id: 'main' } });
+    const model = row?.claudeModel || AiConfig.DEFAULTS.claudeModel;
     res.json({
       available,
       busy:       ai.isLocked(),
       queueDepth: worker.queueDepth(),
-      model:      process.env.OLLAMA_MODEL || 'gemma4:e2b',
+      model,
     });
   } catch {
     res.json({ available: false, busy: false, queueDepth: 0 });
@@ -185,7 +187,15 @@ const getConfig = async (req, res) => {
   try {
     const row = await AiConfig.findOne({ where: { id: 'main' } });
     const D = AiConfig.DEFAULTS;
+    const rawKey = row?.claudeApiKey || '';
+    const claudeApiKeySet  = !!rawKey;
+    const claudeApiKeyMask = claudeApiKeySet
+      ? '****' + rawKey.slice(-4)
+      : '';
     res.json({
+      claudeApiKeySet,
+      claudeApiKeyMask,
+      claudeModel:              row?.claudeModel              ?? D.claudeModel,
       chatSystemPrompt:         row?.chatSystemPrompt         ?? D.chatSystemPrompt,
       fragmentAnalysisPrompt:   row?.fragmentAnalysisPrompt   ?? D.fragmentAnalysisPrompt,
       systemReportTitle:        row?.systemReportTitle        ?? D.systemReportTitle,
@@ -202,6 +212,7 @@ const getConfig = async (req, res) => {
 const updateConfig = async (req, res) => {
   try {
     const allowed = [
+      'claudeModel',
       'chatSystemPrompt', 'fragmentAnalysisPrompt',
       'systemReportTitle', 'enterpriseReportTitle',
       'systemReportChapters', 'enterpriseReportChapters',
@@ -209,6 +220,10 @@ const updateConfig = async (req, res) => {
     const updates = {};
     for (const key of allowed) {
       if (req.body[key] !== undefined) updates[key] = req.body[key];
+    }
+    // Only update API key if a new real key (not mask placeholder) is provided
+    if (req.body.claudeApiKey && !req.body.claudeApiKey.startsWith('****')) {
+      updates.claudeApiKey = req.body.claudeApiKey;
     }
     await AiConfig.upsert({ id: 'main', ...updates });
     ai.invalidateConfigCache();

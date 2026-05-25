@@ -127,13 +127,10 @@ async function _processSystem(systemId) {
 
   const available = await ai.isAvailable();
   if (!available) {
-    await summary.update({ status: 'error', errorMessage: 'Ollama אינו זמין' });
-    console.warn('[Worker] Ollama unavailable, aborting.');
+    await summary.update({ status: 'error', errorMessage: 'שירות Claude API אינו זמין. ודא שמפתח API מוגדר ב-Admin → הגדרות AI.' });
+    console.warn('[Worker] Claude API unavailable (no API key configured), aborting.');
     return;
   }
-
-  // ── Clean floor before loading model ──────────────────────────────────
-  cleanFloor();
 
   try {
     // ── Step 1: Check data availability ───────────────────────────────
@@ -190,7 +187,6 @@ async function _processSystem(systemId) {
     const fragmentTexts = fragments.map(f => `### דיאגרמה: ${f.originalName || f.filename}\n${f.content}`);
 
     // ── Step 5: Synthesise the CTO report ─────────────────────────────
-    cleanFloor();
     await setProgress(summary, `מסנתז דו"ח CTO מ-${fragments.length} פרגמנטים...`);
 
     const report = await ai.synthesiseCTOReport(system.name, fragmentTexts, questionnaireContext);
@@ -224,12 +220,10 @@ async function _processEnterprise() {
 
   const available = await ai.isAvailable();
   if (!available) {
-    await summary.update({ status: 'error', errorMessage: 'Ollama אינו זמין' });
-    console.warn('[Worker] Ollama unavailable, aborting enterprise analysis.');
+    await summary.update({ status: 'error', errorMessage: 'שירות Claude API אינו זמין. ודא שמפתח API מוגדר ב-Admin → הגדרות AI.' });
+    console.warn('[Worker] Claude API unavailable (no API key configured), aborting enterprise analysis.');
     return;
   }
-
-  cleanFloor();
 
   try {
     await setProgress(summary, 'אוסף נתוני מערכות...');

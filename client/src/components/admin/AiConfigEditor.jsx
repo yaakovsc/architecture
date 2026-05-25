@@ -2,16 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { aiApi } from '../../services/api';
 
 const TABS = [
+  { id: 'api',        label: '🔑 חיבור API' },
   { id: 'chat',       label: '💬 צ׳אט' },
   { id: 'system',     label: '📄 דוח מערכת' },
   { id: 'enterprise', label: '🏢 דוח ארגוני' },
 ];
 
+const CLAUDE_MODELS = [
+  { value: 'claude-opus-4-7',          label: 'Claude Opus 4.7 (חזק ביותר)' },
+  { value: 'claude-sonnet-4-6',        label: 'Claude Sonnet 4.6 (מאוזן — ברירת מחדל)' },
+  { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5 (מהיר וזול)' },
+];
+
 export default function AiConfigEditor() {
-  const [config,  setConfig]  = useState(null);
-  const [tab,     setTab]     = useState('chat');
-  const [saving,  setSaving]  = useState(false);
-  const [msg,     setMsg]     = useState(null);
+  const [config,     setConfig]     = useState(null);
+  const [tab,        setTab]        = useState('api');
+  const [saving,     setSaving]     = useState(false);
+  const [msg,        setMsg]        = useState(null);
+  const [newApiKey,  setNewApiKey]  = useState('');
 
   useEffect(() => { load(); }, []);
 
@@ -32,7 +40,11 @@ export default function AiConfigEditor() {
   const save = async () => {
     setSaving(true);
     try {
-      await aiApi.updateConfig(config);
+      const payload = { ...config };
+      if (newApiKey.trim()) payload.claudeApiKey = newApiKey.trim();
+      await aiApi.updateConfig(payload);
+      setNewApiKey('');
+      await load(); // refresh masked key from server
       showMsg('ok', 'הגדרות נשמרו בהצלחה');
     } catch {
       showMsg('error', 'שגיאה בשמירה');
@@ -91,6 +103,44 @@ export default function AiConfigEditor() {
       </div>
 
       <div style={S.body}>
+
+        {/* ── API connection tab ── */}
+        {tab === 'api' && (
+          <>
+            <Section title='מפתח Claude API' hint='המפתח נשמר בצורה מאובטחת בבסיס הנתונים. השג מפתח ב-console.anthropic.com'>
+              {config.claudeApiKeySet && (
+                <div style={{ fontSize: 12, color: '#22a06b', marginBottom: 8, fontWeight: 600 }}>
+                  ✓ מפתח מוגדר: {config.claudeApiKeyMask}
+                </div>
+              )}
+              <input
+                style={S.input}
+                type='password'
+                value={newApiKey}
+                onChange={e => setNewApiKey(e.target.value)}
+                placeholder={config.claudeApiKeySet ? 'הזן מפתח חדש לשינוי...' : 'sk-ant-api03-...'}
+                autoComplete='off'
+              />
+              {!config.claudeApiKeySet && (
+                <div style={{ fontSize: 11, color: '#e5381c', marginTop: 4 }}>
+                  ⚠️ מפתח API לא מוגדר — שירות ה-AI לא יפעל עד שתוגדר.
+                </div>
+              )}
+            </Section>
+
+            <Section title='מודל Claude' hint='בחר את מודל Claude שישמש לניתוח ולשיחה.'>
+              <select
+                style={{ ...S.input, cursor: 'pointer' }}
+                value={config.claudeModel || 'claude-sonnet-4-6'}
+                onChange={e => set('claudeModel', e.target.value)}
+              >
+                {CLAUDE_MODELS.map(m => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </select>
+            </Section>
+          </>
+        )}
 
         {/* ── Chat tab ── */}
         {tab === 'chat' && (

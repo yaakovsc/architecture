@@ -43,7 +43,7 @@ export default function AIChatPanel({ mode = 'system', system, onClose }) {
   const [input,        setInput]        = useState('');
   const [streaming,    setStreaming]     = useState(false);
   const [streamBuffer, setStreamBuffer] = useState('');
-  const [ollamaStatus, setOllamaStatus] = useState(null);
+  const [aiStatus, setOllamaStatus] = useState(null);
   const [summary,      setSummary]      = useState(null);
   const [view,         setView]         = useState('chat'); // kept for future use
 
@@ -191,7 +191,7 @@ export default function AIChatPanel({ mode = 'system', system, onClose }) {
   const summaryStatus = summary?.status || 'none';
   const effectiveStatus = (summaryStatus === 'ready' && !reportContent) ? 'error' : summaryStatus;
   const statusCfg     = STATUS_CONFIG[effectiveStatus] || STATUS_CONFIG.none;
-  const unavailable   = ollamaStatus && !ollamaStatus.available;
+  const unavailable   = aiStatus && !aiStatus.available;
   const isProcessing  = effectiveStatus === 'processing' || effectiveStatus === 'pending';
 
   const panelTitle = isEnterprise ? 'יועץ AI ארגוני' : 'יועץ AI — מערכת';
@@ -231,10 +231,10 @@ export default function AIChatPanel({ mode = 'system', system, onClose }) {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-          {ollamaStatus && (
+          {aiStatus && (
             <span
-              style={{ width: 7, height: 7, borderRadius: '50%', background: ollamaStatus.available ? '#22a06b' : '#e5381c', flexShrink: 0 }}
-              title={ollamaStatus.available ? `Ollama פעיל · ${ollamaStatus.model}` : 'Ollama לא זמין'}
+              style={{ width: 7, height: 7, borderRadius: '50%', background: aiStatus.available ? '#22a06b' : '#e5381c', flexShrink: 0 }}
+              title={aiStatus.available ? `Claude API פעיל · ${aiStatus.model}` : 'Claude API לא זמין — הגדר מפתח API'}
             />
           )}
           <button style={S.hBtn} onClick={onClose}>✕</button>
@@ -278,7 +278,7 @@ export default function AIChatPanel({ mode = 'system', system, onClose }) {
 
       {unavailable && (
         <div style={{ ...S.notice, background: '#fff8f0', color: '#c87000', borderBottom: '1px solid #ffe4b5' }}>
-          ⚠️ Ollama אינו זמין. ודא שהשירות רץ על localhost:11434.
+          ⚠️ מפתח Claude API לא מוגדר. הגדר אותו ב-Admin → הגדרות AI → חיבור API.
         </div>
       )}
 

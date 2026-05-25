@@ -88,6 +88,9 @@ export const navApi = {
   // User: responses
   getResponse: (systemId, buttonId) => api.get(`/nav/response/${systemId}/${buttonId}`),
   saveResponse: (systemId, buttonId, data) => api.put(`/nav/response/${systemId}/${buttonId}`, { data }),
+
+  // Diagram hover texts: { [systemId]: string }
+  getHoverTexts: () => api.get('/nav/hover-texts'),
 };
 
 export const aiApi = {

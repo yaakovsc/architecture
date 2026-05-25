@@ -25,6 +25,9 @@ router.put('/fields/reorder', authenticate, requirePermission('navigation', 'edi
 router.put('/fields/:id', authenticate, requirePermission('navigation', 'edit'), c.updateField);
 router.delete('/fields/:id', authenticate, requirePermission('navigation', 'delete'), c.deleteField);
 
+// ── Hover texts (diagram tooltips) ────────────────────────────────────────
+router.get('/hover-texts', authenticate, c.getHoverTexts);
+
 // ── Responses ─────────────────────────────────────────────────────────────
 router.get('/response/:systemId/:buttonId', authenticate, c.getResponse);
 router.put('/response/:systemId/:buttonId', authenticate, requirePermission('systems', 'edit'), c.saveResponse);

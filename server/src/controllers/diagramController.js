@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const { Diagram, System } = require('../models');
-const { enqueue } = require('../workers/analysisQueue');
+const { enqueue, enqueueEnterprise } = require('../workers/analysisQueue');
 require('dotenv').config();
 
 const storage = multer.diskStorage({
@@ -70,6 +70,9 @@ const uploadDiagram = async (req, res) => {
     // Trigger background analysis (fire-and-forget, non-blocking)
     if (diagram.mimetype?.startsWith('image/')) {
       enqueue(system.id);
+    } else {
+      // Non-image document added — re-run enterprise report to reflect the change
+      enqueueEnterprise();
     }
   } catch {
     res.status(500).json({ message: 'שגיאת שרת' });
@@ -90,6 +93,7 @@ const deleteDiagram = async (req, res) => {
 
     // Re-analyse after deletion so the report stays current
     if (mimetype?.startsWith('image/')) enqueue(systemId);
+    else enqueueEnterprise();
   } catch {
     res.status(500).json({ message: 'שגיאת שרת' });
   }

@@ -16,7 +16,8 @@ export default function DiagramPage() {
   const [aiPanel, setAiPanel]       = useState(null);
   const [btnPos, setBtnPos]         = useState({ x: 0, y: 0 });
   const [imgLoaded, setImgLoaded]   = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDragging, setIsDragging]   = useState(false);
+  const [hoverTexts, setHoverTexts]   = useState({});
 
   // zoom + pan — single state object for atomic updates
   const [vp, setVp] = useState({ zoom: 1, panX: 0, panY: 0 });
@@ -28,6 +29,7 @@ export default function DiagramPage() {
   useEffect(() => {
     systemsApi.getAll().then(r => setSystems(r.data)).catch(() => {});
     navApi.getConfig().then(r => setNavButtons(r.data)).catch(() => {});
+    navApi.getHoverTexts().then(r => setHoverTexts(r.data)).catch(() => {});
   }, []);
 
   // Non-passive wheel listener so we can preventDefault (prevents page scroll)
@@ -210,6 +212,7 @@ export default function DiagramPage() {
               system={system}
               isSelected={selectedKey === system.key}
               onClick={handleSystemClick}
+              hoverText={hoverTexts[system.id] || system.name}
             />
           ))}
         </div>
@@ -266,11 +269,11 @@ export default function DiagramPage() {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function SystemHotspot({ system, isSelected, onClick }) {
+function SystemHotspot({ system, isSelected, onClick, hoverText }) {
   return (
     <div
       onClick={(e) => onClick(system, e)}
-      title={system.name}
+      title={hoverText}
       style={{
         position: 'absolute',
         left:   `${system.posX}%`,

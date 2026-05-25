@@ -169,16 +169,19 @@ const _buildOptions = (options) =>
 
 const createField = async (req, res) => {
   try {
-    const { subjectId, name, type, exampleValue, isRequired, displayOrder, options } = req.body;
+    const { subjectId, name, type, exampleValue, isRequired, isHoverText, displayOrder, options } = req.body;
     if (!subjectId) return res.status(400).json({ message: 'subjectId נדרש' });
     if (!name?.trim()) return res.status(400).json({ message: 'שם נדרש' });
     if (!type) return res.status(400).json({ message: 'סוג נדרש' });
     if ((type === 'select' || type === 'multi_value_select') && (!options || options.length === 0)) {
       return res.status(400).json({ message: 'שדה סוג בחירה חייב לכלול לפחות ערך אחד' });
     }
+    // Only one field across all buttons can be the hover text source
+    if (isHoverText) await NavField.update({ isHoverText: false }, { where: {} });
     const field = await NavField.create({
       subjectId, name: name.trim(), type,
       exampleValue, isRequired: isRequired ?? false,
+      isHoverText: isHoverText ?? false,
       displayOrder: displayOrder ?? 0,
     });
     if (options?.length) {
@@ -193,17 +196,20 @@ const updateField = async (req, res) => {
   try {
     const field = await NavField.findByPk(req.params.id);
     if (!field) return res.status(404).json({ message: 'שדה לא נמצא' });
-    const { name, type, exampleValue, isRequired, displayOrder, options } = req.body;
+    const { name, type, exampleValue, isRequired, isHoverText, displayOrder, options } = req.body;
     if (name !== undefined && !name.trim()) return res.status(400).json({ message: 'שם נדרש' });
     const newType = type ?? field.type;
     if ((newType === 'select' || newType === 'multi_value_select') && options !== undefined && options.length === 0) {
       return res.status(400).json({ message: 'שדה סוג בחירה חייב לכלול לפחות ערך אחד' });
     }
+    // Only one field can be the hover text source — clear others first
+    if (isHoverText) await NavField.update({ isHoverText: false }, { where: {} });
     await field.update({
       ...(name !== undefined && { name: name.trim() }),
       ...(type !== undefined && { type }),
       ...(exampleValue !== undefined && { exampleValue }),
       ...(isRequired !== undefined && { isRequired }),
+      ...(isHoverText !== undefined && { isHoverText }),
       ...(displayOrder !== undefined && { displayOrder }),
     });
     if (options !== undefined) {
@@ -265,10 +271,28 @@ const saveResponse = async (req, res) => {
   } catch { res.status(500).json({ message: 'שגיאת שרת' }); }
 };
 
+// ── GET /nav/hover-texts ──────────────────────────────────────────────────
+// Returns { [systemId]: string } — the hover text value for each system that
+// has filled in the field marked as isHoverText, keyed by system UUID.
+const getHoverTexts = async (req, res) => {
+  try {
+    const field = await NavField.findOne({ where: { isHoverText: true } });
+    if (!field) return res.json({});
+    const responses = await NavResponse.findAll({ where: {} });
+    const result = {};
+    for (const r of responses) {
+      const val = r.data?.[field.id];
+      if (val && String(val).trim()) result[r.systemId] = Array.isArray(val) ? val.join(', ') : String(val);
+    }
+    res.json(result);
+  } catch { res.status(500).json({ message: 'שגיאת שרת' }); }
+};
+
 module.exports = {
   getConfig,
   getButtons, createButton, updateButton, deleteButton, reorderButtons,
   getSubjects, createSubject, updateSubject, deleteSubject, reorderSubjects,
   createField, updateField, deleteField, reorderFields,
   getResponse, saveResponse,
+  getHoverTexts,
 };

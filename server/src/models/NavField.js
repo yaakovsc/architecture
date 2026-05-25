@@ -27,6 +27,10 @@ const NavField = sequelize.define('NavField', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  isHoverText: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
   displayOrder: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
