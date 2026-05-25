@@ -33,39 +33,25 @@ function analyseDelta(oldRow, newData, D) {
     }
   }
 
-  // System report chapters — triggers system + enterprise re-run
+  // System report chapters — any change triggers system + enterprise re-run
   if (newData.systemReportChapters !== undefined) {
-    const oc = old('systemReportChapters') || [];
-    const nc = newData.systemReportChapters || [];
-    if (nc.length !== oc.length) {
+    const oc = JSON.stringify(old('systemReportChapters') || []);
+    const nc = JSON.stringify(newData.systemReportChapters || []);
+    if (oc !== nc) {
       result.score += 10;
       result.affectsSystemReport = result.affectsEnterprise = true;
-      result.reasons.push(`פרקי דו"ח מערכת שונו (${oc.length} → ${nc.length} פרקים)`);
-    } else {
-      const maxDist = Math.max(0, ...nc.map((ch, i) => jaccardDistance(oc[i]?.prompt || '', ch.prompt || '')));
-      if (maxDist > 0.25) {
-        result.score += 6;
-        result.affectsSystemReport = result.affectsEnterprise = true;
-        result.reasons.push(`תוכן פרקי דו"ח מערכת שונה ב-${Math.round(maxDist * 100)}%`);
-      }
+      result.reasons.push('פרקי דו"ח מערכת שונו');
     }
   }
 
-  // Enterprise report chapters — triggers enterprise re-run only
+  // Enterprise report chapters — any change triggers enterprise re-run
   if (newData.enterpriseReportChapters !== undefined) {
-    const oc = old('enterpriseReportChapters') || [];
-    const nc = newData.enterpriseReportChapters || [];
-    if (nc.length !== oc.length) {
+    const oc = JSON.stringify(old('enterpriseReportChapters') || []);
+    const nc = JSON.stringify(newData.enterpriseReportChapters || []);
+    if (oc !== nc) {
       result.score += 10;
       result.affectsEnterprise = true;
-      result.reasons.push(`פרקי דו"ח ארגוני שונו (${oc.length} → ${nc.length} פרקים)`);
-    } else {
-      const maxDist = Math.max(0, ...nc.map((ch, i) => jaccardDistance(oc[i]?.prompt || '', ch.prompt || '')));
-      if (maxDist > 0.25) {
-        result.score += 6;
-        result.affectsEnterprise = true;
-        result.reasons.push(`תוכן פרקי דו"ח ארגוני שונה ב-${Math.round(maxDist * 100)}%`);
-      }
+      result.reasons.push('פרקי דו"ח ארגוני שונו');
     }
   }
 
